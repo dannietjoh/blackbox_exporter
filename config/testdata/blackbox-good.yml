@@ -65,3 +65,10 @@ modules:
       preferred_ip_protocol: ip4
       validate_answer_rrs:
         fail_if_matches_regexp: [test]
+  traceroute_test:
+    prober: traceroute
+    timeout: 60s
+    traceroute:
+      preferred_ip_protocol: "ip4"
+      max_hops: 100
+      packet_size: 60

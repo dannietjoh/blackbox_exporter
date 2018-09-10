@@ -32,3 +32,9 @@ modules:
       - expect: "^:[^ ]+ 001"
   icmp:
     prober: icmp
+  traceroute:
+    prober: traceroute
+    traceroute:
+      preferred_ip_protocol: "ip4"
+      max_hops: 100
+      packet_size: 60

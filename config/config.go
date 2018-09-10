@@ -42,12 +42,13 @@ func (sc *SafeConfig) ReloadConfig(confFile string) (err error) {
 }
 
 type Module struct {
-	Prober  string        `yaml:"prober,omitempty"`
-	Timeout time.Duration `yaml:"timeout,omitempty"`
-	HTTP    HTTPProbe     `yaml:"http,omitempty"`
-	TCP     TCPProbe      `yaml:"tcp,omitempty"`
-	ICMP    ICMPProbe     `yaml:"icmp,omitempty"`
-	DNS     DNSProbe      `yaml:"dns,omitempty"`
+	Prober     string          `yaml:"prober,omitempty"`
+	Timeout    time.Duration   `yaml:"timeout,omitempty"`
+	HTTP       HTTPProbe       `yaml:"http,omitempty"`
+	TCP        TCPProbe        `yaml:"tcp,omitempty"`
+	ICMP       ICMPProbe       `yaml:"icmp,omitempty"`
+	DNS        DNSProbe        `yaml:"dns,omitempty"`
+	TRACEROUTE TraceRouteProbe `yaml:"traceroute,omitempty"`
 }
 
 type HTTPProbe struct {
@@ -102,6 +103,12 @@ type DNSProbe struct {
 type DNSRRValidator struct {
 	FailIfMatchesRegexp    []string `yaml:"fail_if_matches_regexp,omitempty"`
 	FailIfNotMatchesRegexp []string `yaml:"fail_if_not_matches_regexp,omitempty"`
+}
+
+type TraceRouteProbe struct {
+	PreferredIPProtocol string `yaml:"preferred_ip_protocol,omitempty"`
+	MaxHops             int    `yaml:"max_hops,omitempty"`
+	PacketSize          int    `yaml:"packet_size,omitempty"`
 }
 
 // UnmarshalYAML implements the yaml.Unmarshaler interface.
@@ -180,6 +187,15 @@ func (s *ICMPProbe) UnmarshalYAML(unmarshal func(interface{}) error) error {
 // UnmarshalYAML implements the yaml.Unmarshaler interface.
 func (s *QueryResponse) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	type plain QueryResponse
+	if err := unmarshal((*plain)(s)); err != nil {
+		return err
+	}
+	return nil
+}
+
+// UnmarshalYAML implements the yaml.Unmarshaler interface.
+func (s *TraceRouteProbe) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	type plain TraceRouteProbe
 	if err := unmarshal((*plain)(s)); err != nil {
 		return err
 	}
